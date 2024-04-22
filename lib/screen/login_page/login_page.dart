@@ -57,9 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   try {
                     await _auth.signInWithEmailAndPassword(
                         email: _email!, password: _password!);
-                    Get.offAll(const HomeScreen());
+                    Get.offAll(HomeScreen());
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.error,
                         content: Text('Email yoki parol noto\'g\'ri')));
                     print('Error ----------------------- $e');
                     // bu yerda xatolikni foydalanuvchiga ko'rsatish kodi bo'ladi

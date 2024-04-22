@@ -8,16 +8,15 @@ import '../home/home_page.dart';
 import '../login_page/login_page.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final _auth = FirebaseAuth.instance;
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkCurrentUser();
   }
@@ -27,19 +26,19 @@ class _SplashScreenState extends State<SplashScreen> {
     final user = auth.currentUser;
 
     if (user != null) {
-      Timer(Duration(seconds: 3), () {
+      Timer(const Duration(seconds: 3), () {
         Get.off(() => HomeScreen());
       });
     } else {
-      Timer(Duration(seconds: 3), () {
-        Get.off(() => LoginScreen());
+      Timer(const Duration(seconds: 3), () {
+        Get.off(() => const LoginScreen());
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text('Splash Screen', style: TextStyle(fontSize: 24)),
       ),
