@@ -1,8 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mebel_uz_admin/firebase_options.dart';
+import 'package:mebel_uz_admin/screen/splash/splash_screen.dart';
+
+import 'screen/login_page/login_page.dart';
 
 void main() async {
-  await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -11,24 +19,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Panel'),
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Mebel uz',
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        primaryColor: Colors.green,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green),
+        brightness: Brightness.light,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        appBarTheme: const AppBarTheme(
+          surfaceTintColor: Colors.white,
+          backgroundColor: Colors.white, // Set your desired background color
+          elevation: 0.0, // Remove any default elevation
+          titleTextStyle: TextStyle(
+            color: Colors.black, // Adjust title text color
+            fontSize: 20.0,
+          ),
+        ),
       ),
-      body: Center(
-        child: Text('Admin Panel'),
-      ),
+      home: SplashScreen(),
     );
   }
 }

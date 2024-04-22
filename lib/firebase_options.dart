@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'mebel-uz-4a79c.appspot.com',
     iosBundleId: 'com.example.mebelUzAdmin',
   );
+
 }
