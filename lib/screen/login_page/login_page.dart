@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../home/home_page.dart';
+import 'controller/controller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,10 +13,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-
-  final _auth = FirebaseAuth.instance;
-
+  final LoginController loginController = Get.put(LoginController());
   String? _email, _password;
 
   @override
@@ -25,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text('Admin Login'),
       ),
       body: Form(
-        key: _formKey,
+        key: loginController.formKey, // Access formKey from controller
         child: Column(
           children: <Widget>[
             TextFormField(
@@ -49,25 +47,18 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               onSaved: (value) => _password = value,
             ),
-            ElevatedButton(
-              child: const Text('Kirish'),
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  try {
-                    await _auth.signInWithEmailAndPassword(
-                        email: _email!, password: _password!);
-                    Get.offAll(HomeScreen());
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                        content: Text('Email yoki parol noto\'g\'ri')));
-                    print('Error ----------------------- $e');
-                    // bu yerda xatolikni foydalanuvchiga ko'rsatish kodi bo'ladi
-                  }
-                }
-              },
-            ),
+            Obx(() => ElevatedButton(
+                  child: loginController.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Kirish'),
+                  onPressed: () async {
+                    if (loginController.formKey.currentState!.validate()) {
+                      loginController.formKey.currentState!.save();
+                      await loginController.signInWithEmailAndPassword(
+                          _email!, _password!);
+                    }
+                  },
+                ))
           ],
         ),
       ),

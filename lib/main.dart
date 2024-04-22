@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:mebel_uz_admin/firebase_options.dart';
 import 'package:mebel_uz_admin/screen/splash/splash_screen.dart';
 
-import 'screen/login_page/login_page.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -38,7 +36,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
