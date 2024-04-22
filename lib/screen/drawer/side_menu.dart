@@ -9,8 +9,6 @@ import 'package:mebel_uz_admin/screen/login_page/login_page.dart';
 import 'package:mebel_uz_admin/screen/products/products_screen.dart';
 import 'package:mebel_uz_admin/screen/users/users_screen.dart';
 
-import '../orders/orders_screen.dart';
-
 class SideMenuDrawer extends StatefulWidget {
   const SideMenuDrawer({super.key});
 
@@ -48,11 +46,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                 ListTile(
                   leading: const Icon(Iconsax.shop),
                   title: const Text('Buyurtmalar ro\'yxati'),
-                  onTap: () {
-                    Get.back();
-                    Get.to(() => OrdersScreen(),
-                        transition: Transition.cupertino);
-                  },
+                  onTap: () {},
                 ),
                 ListTile(
                   leading: const Icon(Iconsax.category),
