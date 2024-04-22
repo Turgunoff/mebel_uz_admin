@@ -12,11 +12,18 @@ class CategoryModel {
   });
 
   // Convert Firestore document snapshot to a CategoryModel
-  factory CategoryModel.fromJson(json) {
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      categoryId: json['categoryId'],
-      categoryName: json['categoryName'],
-      categoryImage: json['categoryImage'],
+      categoryId: json['categoryId'] as String,
+      categoryName: json['categoryName'] as String,
+      categoryImage: json['categoryImage'] as String,
     );
   }
+
+  // Convert CategoryModel object to a Map for Firestore
+  Map<String, dynamic> toJson() => {
+        'categoryId': categoryId,
+        'categoryName': categoryName,
+        'categoryImage': categoryImage,
+      };
 }
