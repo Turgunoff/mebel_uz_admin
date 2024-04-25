@@ -4,11 +4,15 @@ import 'package:get/get.dart';
 import 'package:mebel_uz_admin/firebase_options.dart';
 import 'package:mebel_uz_admin/screen/splash/splash_screen.dart';
 
+import 'screen/products/controller/controller.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Get.put(ProductController());
+
   runApp(const MyApp());
 }
 

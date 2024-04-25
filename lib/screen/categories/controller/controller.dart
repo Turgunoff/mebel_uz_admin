@@ -35,16 +35,41 @@ class CategoryController extends GetxController {
     isLoading.value = false; // Set loading to false when data is fetched
   }
 
-  Future<void> addCategory(CategoryModel category) async {
-    CollectionReference categoriesRef = _firestore.collection('Categories');
-    DocumentReference docRef =
-        await categoriesRef.add(category.toJson()); // Use documentId
+  Future<void> addCategory(String categoryName, String categoryImage) async {
+    CategoryModel newCategory = CategoryModel(
+      categoryId: '', // Let Firestore generate ID
+      categoryName: categoryName,
+      categoryImage: categoryImage,
+    );
 
-    // Update the category's documentId after adding
-    category.categoryId = docRef.id;
+    DocumentReference docRef =
+        await _firestore.collection('Categories').add(newCategory.toJson());
+
+    // Update the category's categoryId with the documentId
+    newCategory.categoryId = docRef.id;
+
+    // Update the categoryId in Firestore
+    await docRef.update({'categoryId': docRef.id});
+
     categories.value = [
       ...categories,
-      category
+      newCategory
     ]; // Update the controller's list
+  }
+
+  Future<void> deleteCategory(CategoryModel category) async {
+    try {
+      CollectionReference categoriesRef = _firestore.collection('Categories');
+      await categoriesRef
+          .doc(category.categoryId)
+          .delete(); // Delete using documentId
+
+      // Remove the deleted category from the controller's list
+      categories
+          .removeWhere((element) => element.categoryId == category.categoryId);
+    } catch (e) {
+      print('Kategoriyani o\'chirishda xatolik yuz berdi: $e');
+      // Consider displaying a snackbar or dialog to the user for error handling
+    }
   }
 }

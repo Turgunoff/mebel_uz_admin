@@ -40,6 +40,7 @@ dependencies:
   get: ^4.6.6
   iconsax: ^0.0.8
   cloud_firestore: ^4.17.0
+  syncfusion_flutter_datagrid: ^25.1.41
 
 dev_dependencies:
   flutter_test:

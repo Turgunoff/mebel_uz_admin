@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
 import 'controller/controller.dart';
-import 'models/model.dart';
 
 class CategoryScreen extends StatelessWidget {
   CategoryScreen({super.key});
@@ -11,22 +9,22 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(AddCategoryScreen()),
-        child: const Icon(Icons.add),
-      ),
-      body: Obx(() {
-        if (controller.categories.isEmpty) {
-          return const Center(child: Text('No categories found'));
-        } else {
-          return controller.isLoading.value // Check the loading state
-              ? const Center(
-                  child:
-                      CircularProgressIndicator()) // Show indicator if loading
-              : RefreshIndicator(
-                  onRefresh: controller.refreshData,
-                  child: ListView.separated(
+    return RefreshIndicator(
+      onRefresh: controller.refreshData,
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Get.to(AddCategoryScreen()),
+          child: const Icon(Icons.add),
+        ),
+        body: Obx(() {
+          if (controller.categories.isEmpty) {
+            return const Center(child: Text('No categories found'));
+          } else {
+            return controller.isLoading.value // Check the loading state
+                ? const Center(
+                    child:
+                        CircularProgressIndicator()) // Show indicator if loading
+                : ListView.separated(
                     separatorBuilder: (context, index) => Divider(
                       color: Colors.grey.shade200,
                     ),
@@ -38,7 +36,7 @@ class CategoryScreen extends StatelessWidget {
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            // controller.deleteCategory(category);
+                            controller.deleteCategory(category);
                           },
                         ),
                         leading: CircleAvatar(
@@ -53,10 +51,10 @@ class CategoryScreen extends StatelessWidget {
                         title: Text(category.categoryName),
                       );
                     },
-                  ),
-                );
-        }
-      }),
+                  );
+          }
+        }),
+      ),
     );
   }
 }
@@ -109,17 +107,12 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save(); // Save form values
 
-                  // Create a new CategoryModel object
-                  CategoryModel newCategory = CategoryModel(
-                    categoryId: '', // Let Firestore generate ID
-                    categoryName: _categoryNameController.text,
-                    categoryImage: '', // Replace with image upload later
-                  );
-
                   try {
                     // Add the category to Firestore
                     await controller.addCategory(
-                        newCategory); // Call your controller's add function
+                      _categoryNameController.text,
+                      '', // Replace with image upload later
+                    );
 
                     // Navigate back to CategoryScreen
                     Get.back();

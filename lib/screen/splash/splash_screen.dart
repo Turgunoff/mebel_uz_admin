@@ -21,19 +21,19 @@ class _SplashScreenState extends State<SplashScreen> {
     _checkCurrentUser();
   }
 
-  void _checkCurrentUser() async {
-    final auth = FirebaseAuth.instance;
-    final user = auth.currentUser;
+  void _checkCurrentUser() {
+    // final auth = FirebaseAuth.instance;
+    // final user = auth.currentUser;
 
-    if (user != null) {
-      Timer(const Duration(seconds: 3), () {
-        Get.off(() => HomeScreen());
-      });
-    } else {
-      Timer(const Duration(seconds: 3), () {
-        Get.off(() => const LoginScreen());
-      });
-    }
+    // if (user != null) {
+    Timer(const Duration(seconds: 3), () {
+      Get.off(() => HomeScreen());
+    });
+    // } else {
+    //   Timer(const Duration(seconds: 3), () {
+    //     Get.off(() => const LoginScreen());
+    //   });
+    // }
   }
 
   @override
