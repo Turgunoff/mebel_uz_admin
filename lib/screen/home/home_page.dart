@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (currentPage == DrawerSections.categories) {
       container = CategoryScreen();
     } else if (currentPage == DrawerSections.products) {
-      container = const ProductsScreen();
+      container = ProductsScreen();
     } else if (currentPage == DrawerSections.orders) {
       container = const OrdersScreen();
     } else if (currentPage == DrawerSections.users) {

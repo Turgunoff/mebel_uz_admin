@@ -11,7 +11,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Get.put(ProductController());
 
   runApp(const MyApp());
 }
