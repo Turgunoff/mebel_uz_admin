@@ -1,4 +1,4 @@
-class Product {
+class ProductModel {
   final String productId;
   final String name;
   final String category;
@@ -7,7 +7,7 @@ class Product {
   final int stockQuantity;
   final String status;
 
-  Product({
+  ProductModel({
     required this.productId,
     required this.name,
     required this.category,
@@ -18,7 +18,7 @@ class Product {
   });
 
   // Method to deserialize Firestore data into a Product object (optional).
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
+  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
         productId: json['productId'] as String,
         name: json['name'] as String,
         category: json['category'] as String,

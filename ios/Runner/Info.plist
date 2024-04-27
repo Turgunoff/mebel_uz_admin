@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Bu app sizning foto kutubxonangizdan rasmlarni tanlab olish uchun foydalanadi</string>
+
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Bu app audio yo'zuvlarni yaratish uchun foydalanadi</string>
+
+  <key>NSCameraUsageDescription</key>
+  <string>Bu app yangi rasmlarni suratga olish uchun kamera funksiyasini ishlatadi</string>
 </dict>
 </plist>

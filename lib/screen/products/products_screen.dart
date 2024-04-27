@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'controller/controller.dart';
 
@@ -27,7 +30,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     {
       "productId": "2",
       "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
+          "https://i.pinimg.com/originals/fb/5e/6f/fb5e6f42c2dd1d35814ae4ff64a55ce0.png",
       "productName": "Mahsulot 2",
       "productCategory": "Kategoriya 2",
       "price": 50.00,
@@ -228,14 +231,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 Colors.grey.shade200), // Sarlavha rangi
             dataRowColor: MaterialStateProperty.all(Colors.white),
             border: TableBorder.all(color: Colors.grey.shade300),
-            columns: [
-              const DataColumn(label: Text('productId')),
-              DataColumn(label: Text('ProductImage')),
-              const DataColumn(label: Text('productName')),
-              const DataColumn(label: Text('productCategory')),
-              const DataColumn(label: Text('Narx')),
-              const DataColumn(label: Text('Sotilgan Mahsulotlar')),
-              const DataColumn(label: Text('Amallar')),
+            columns: const [
+              DataColumn(label: Text('Id')),
+              DataColumn(label: Text('Rasmi')),
+              DataColumn(label: Text('Nomi')),
+              DataColumn(label: Text('Kategoriya')),
+              DataColumn(label: Text('Narxi')),
+              DataColumn(label: Text('Sotilgan Mahsulotlar')),
+              DataColumn(label: Text('Amallar')),
             ],
             rows: productsData.map((product) {
               return DataRow(
@@ -245,7 +248,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   DataCell(
                     Container(
                       width: 100,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           vertical: 2), // Rasmning kengligini belgilash
                       child: Image.network(
                         product['productImage'],
@@ -296,9 +299,86 @@ class _ProductsScreenState extends State<ProductsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Product qo'shish formasini ochish
+          Get.to(() => const AddProduct());
         },
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class AddProduct extends StatefulWidget {
+  const AddProduct({super.key});
+
+  @override
+  State<AddProduct> createState() => _AddProductState();
+}
+
+class _AddProductState extends State<AddProduct> {
+  final _formKey = GlobalKey<FormState>();
+
+  // Controllerlar
+  final _nameController = TextEditingController();
+
+  final ImagePicker imagePicker = ImagePicker();
+  List<XFile> imageFileList = [];
+
+  void _pickImages() async {
+    final List<XFile> selectedImages = await imagePicker.pickMultiImage();
+    if (selectedImages.isNotEmpty) {
+      imageFileList.addAll(selectedImages);
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mahsulot Qo\'shish'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Product Nomi',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Iltimos, ma\'lumot kiriting';
+                    }
+                    return null; // To'g'ri formatda bo'lsa null qaytaring
+                  },
+                ),
+                // ... Boshqa form maydonlari
+                ElevatedButton(
+                  onPressed: _pickImages,
+                  child: Text('Rasmlarni Tanlash'),
+                ),
+
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Form yuborilsa _submitForm'ni chaqirish
+                      // _submitForm();
+                    }
+                  },
+                  child: const Text('Qo\'shish'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
