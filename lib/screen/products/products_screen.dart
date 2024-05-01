@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -319,6 +320,8 @@ class _AddProductState extends State<AddProduct> {
 
   // Controllerlar
   final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _priceController = TextEditingController();
 
   final ImagePicker imagePicker = ImagePicker();
   List<XFile> imageFileList = [];
@@ -326,9 +329,36 @@ class _AddProductState extends State<AddProduct> {
   void _pickImages() async {
     final List<XFile> selectedImages = await imagePicker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
-      imageFileList.addAll(selectedImages);
+      setState(() {
+        imageFileList.addAll(selectedImages);
+      });
     }
-    setState(() {});
+  }
+
+  void _submitForm() async {
+    // Form ma'lumotlarini to'plash
+    final name = _nameController.text;
+    final description = _descriptionController.text;
+    final price = double.tryParse(_priceController.text);
+
+    // Yuklashni tekshirish (agar kerak bo'lsa)
+    if (name.isEmpty || description.isEmpty || price == null) {
+      // Xato xabari ko'rsatish
+      return;
+    }
+
+    // Rasmni serverga yuklash (agar kerak bo'lsa)
+    // ...
+
+    // Ma'lumotlar bazasida yangi mahsulot yozuvini yaratish
+    // ...
+
+    // Muvaffaqiyatli xabarni ko'rsatish
+    // ...
+
+    // Formni qayta tiklash
+    _formKey.currentState!.reset();
+    imageFileList.clear();
   }
 
   @override
@@ -348,7 +378,30 @@ class _AddProductState extends State<AddProduct> {
                   controller: _nameController,
                   decoration: InputDecoration(
                     labelText: 'Product Nomi',
+                    labelStyle: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 14,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 10.0),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade200, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.red, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                     border: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade200, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 2.0),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -356,21 +409,147 @@ class _AddProductState extends State<AddProduct> {
                     if (value == null || value.isEmpty) {
                       return 'Iltimos, ma\'lumot kiriting';
                     }
-                    return null; // To'g'ri formatda bo'lsa null qaytaring
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Product Tavsifi',
+                    labelStyle: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 14,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 10.0),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade200, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.red, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade200, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 2.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Iltimos, ma\'lumot kiriting';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Product Narxi',
+                    labelStyle: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 14,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 10.0),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade200, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.red, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade200, width: 1.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 2.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Iltimos, ma\'lumot kiriting';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Narx son bo\'lishi kerak';
+                    }
+                    return null;
                   },
                 ),
                 // ... Boshqa form maydonlari
+                SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: imageFileList.isEmpty ? 0 : imageFileList.length,
+                    itemBuilder: (context, index) => imageFileList.isEmpty
+                        ? const SizedBox.shrink()
+                        : Container(
+                            margin: const EdgeInsets.only(right: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.grey.shade200,
+                                width: 1,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Stack(
+                                // "X" tugma qo'shish uchun
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Image.file(
+                                    File(imageFileList[index].path),
+                                    fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                  IconButton(
+                                    // "X" tugma
+                                    onPressed: () {
+                                      setState(() {
+                                        imageFileList.removeAt(index);
+                                      });
+                                    },
+                                    icon: const Icon(Icons.cancel,
+                                        color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: _pickImages,
-                  child: Text('Rasmlarni Tanlash'),
+                  child: const Text('Rasmlarni Tanlash'),
                 ),
-
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Form yuborilsa _submitForm'ni chaqirish
-                      // _submitForm();
+                      _submitForm();
                     }
                   },
                   child: const Text('Qo\'shish'),
