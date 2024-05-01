@@ -374,37 +374,9 @@ class _AddProductState extends State<AddProduct> {
             key: _formKey,
             child: Column(
               children: [
-                TextFormField(
+                buildTextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Product Nomi',
-                    labelStyle: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 14,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 10.0),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.red, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade400, width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
+                  labelText: 'Product Nomi',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Iltimos, ma\'lumot kiriting';
@@ -413,37 +385,9 @@ class _AddProductState extends State<AddProduct> {
                   },
                 ),
                 const SizedBox(height: 20),
-                TextFormField(
+                buildTextFormField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Product Tavsifi',
-                    labelStyle: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 14,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 10.0),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.red, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade400, width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
+                  labelText: 'Product Tavsifi',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Iltimos, ma\'lumot kiriting';
@@ -452,44 +396,13 @@ class _AddProductState extends State<AddProduct> {
                   },
                 ),
                 const SizedBox(height: 20),
-                TextFormField(
+                buildTextFormField(
+                  labelText: "Product Narxi",
                   controller: _priceController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Product Narxi',
-                    labelStyle: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 14,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 10.0),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.red, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade400, width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Iltimos, ma\'lumot kiriting';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Narx son bo\'lishi kerak';
                     }
                     return null;
                   },
@@ -559,6 +472,51 @@ class _AddProductState extends State<AddProduct> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildTextFormField({
+    required String labelText,
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      // controller: _nameController,
+      controller: controller,
+      decoration: InputDecoration(
+        // labelText: 'Product Nomi',
+        labelText: labelText,
+        labelStyle: TextStyle(
+          color: Colors.grey.shade500,
+          fontSize: 14,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade200, width: 1.0),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.red, width: 1.0),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade200, width: 1.0),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade400, width: 2.0),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      validator: validator,
+      // validator: (value) {
+      //   if (value == null || value.isEmpty) {
+      //     return 'Iltimos, ma\'lumot kiriting';
+      //   }
+      //   return null;
+      // },
     );
   }
 }
