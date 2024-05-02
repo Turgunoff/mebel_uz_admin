@@ -1,16 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:mebel_uz_admin/screen/categories/models/category_model.dart';
 import 'package:mebel_uz_admin/screen/products/model/product_model.dart';
 
 class ProductsController extends GetxController {
   final _firestore = FirebaseFirestore.instance;
   RxList<ProductModel> products = RxList<ProductModel>([]);
+  RxList<CategoryModel> categories =
+      RxList<CategoryModel>([]); // Kategoriyalarni saqlashi uchun
+
   RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchProducts();
+    _fetchCategories();
   }
 
   Future<void> refreshData() async {
@@ -34,17 +39,20 @@ class ProductsController extends GetxController {
     isLoading.value = false; // Set loading to false when data is fetched
   }
 
-// Keshdan ma'lumotlarni yuklash uchun funktsiya
-//   void loadProductsFromCache(String cachedData) {
-//     // Kesh ma'lumotlarni deserializatsiya qilish
-//     final cachedProducts = jsonDecode(cachedData) as List<dynamic>;
-//     final productsList =
-//         cachedProducts.map((data) => ProductModel.fromJson(data)).toList();
-//     products.value = productsList; // Mahsulotlar ro'yxatini yangilaymiz
-//   }
+  //Firestore`dan kategoriyalarni olib kelish
+  Future<void> _fetchCategories() async {
+    CollectionReference categoriesCollection =
+        FirebaseFirestore.instance.collection('Categories');
+    QuerySnapshot querySnapshot = await categoriesCollection.get();
 
-// // Foydalanuvchiga xabar ko'rsatish uchun funktsiya (misol)
-//   void showToast(String message) {
-//     // Toast yoki boshqa xabar ko'rsatish mexanizmini ishlating
-//   }
+    List<CategoryModel> newList = querySnapshot.docs.map((doc) {
+      if (doc.data() is Map<String, dynamic>) {
+        return CategoryModel.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        // Handle unexpected situations here
+        throw Exception('Document data is not a Map');
+      }
+    }).toList();
+    categories.value = newList;
+  }
 }

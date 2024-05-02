@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mebel_uz_admin/screen/categories/models/category_model.dart';
+import 'package:mebel_uz_admin/screen/products/controller/controller.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -15,6 +18,8 @@ class AddProduct extends StatefulWidget {
 class _AddProductState extends State<AddProduct> {
   final _formKey = GlobalKey<FormState>();
 
+  final controller = Get.put(ProductsController());
+
   // Controllerlar
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -23,6 +28,7 @@ class _AddProductState extends State<AddProduct> {
 
   final ImagePicker imagePicker = ImagePicker();
   List<XFile> imageFileList = [];
+  String? _selectedCategoryId;
 
   void _pickImages() async {
     final List<XFile> selectedImages = await imagePicker.pickMultiImage();
@@ -59,31 +65,74 @@ class _AddProductState extends State<AddProduct> {
     imageFileList.clear();
   }
 
-  List<CategoryModel> _categories = []; // Kategoriyalarni saqlashi uchun
-  String? _selectedCategoryId;
+  // Function to add product to Firestore
+  Future<void> _addProductToFirestore({
+    required String name,
+    required String description,
+    required double price,
+    required int stockQuantity,
+    required String categoryId,
+    required List<XFile> images,
+  }) async {
+    // 1. Show a Loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchCategories();
+    try {
+      // 2. Upload images to Firebase Storage (if provided)
+      List<String> imageUrls = await _uploadImagesToStorage(images);
+
+      // 3. Create product document in Firestore
+      CollectionReference productsCollection =
+          FirebaseFirestore.instance.collection('Products');
+      DocumentReference docRef = await productsCollection.add({
+        'name': name,
+        'description': description,
+        'price': price,
+        'stockQuantity': stockQuantity,
+        'categoryId': categoryId,
+        'imageUrls': imageUrls,
+      });
+
+      // 4. If successful, clear the form & navigate to success screen
+      _formKey.currentState!.reset();
+      imageFileList.clear();
+      Navigator.pop(context); // Close the loading dialog
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Mahsulot qo\'shildi!')));
+      // Optionally navigate to a success screen
+    } catch (e) {
+      // 5. Close the loading indicator and handle errors
+      Navigator.pop(context); // Close the loading dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Xatolik: $e')),
+      );
+    }
   }
 
-  //Firestore`dan kategoriyalarni olib kelish
-  Future<void> _fetchCategories() async {
-    CollectionReference categoriesCollection =
-        FirebaseFirestore.instance.collection('Categories');
-    QuerySnapshot querySnapshot = await categoriesCollection.get();
+  // Function to upload images to Firebase Storage
+  Future<List<String>> _uploadImagesToStorage(List<XFile> images) async {
+    List<String> imageUrls = [];
 
-    setState(() {
-      _categories = querySnapshot.docs.map((doc) {
-        if (doc.data() is Map<String, dynamic>) {
-          return CategoryModel.fromJson(doc.data() as Map<String, dynamic>);
-        } else {
-          // Handle unexpected situations here
-          throw Exception('Document data is not a Map');
-        }
-      }).toList();
-    });
+    for (XFile imageFile in images) {
+      // Generate unique file name
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+      // Upload image to Firebase Storage
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child('productImages/$fileName');
+      UploadTask uploadTask = storageRef.putFile(File(imageFile.path));
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+
+      // Get the download URL of the uploaded image
+      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+      imageUrls.add(downloadUrl);
+    }
+
+    return imageUrls;
   }
 
   @override
@@ -144,55 +193,57 @@ class _AddProductState extends State<AddProduct> {
                   },
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  dropdownColor: Colors.white,
-                  decoration: InputDecoration(
-                    labelText: 'Categoriya',
-                    labelStyle: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 14,
+                Obx(
+                  () => DropdownButtonFormField<String>(
+                    dropdownColor: Colors.white,
+                    decoration: InputDecoration(
+                      labelText: 'Categoriya',
+                      labelStyle: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 14,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 10.0),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade200, width: 1.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.red, width: 1.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade200, width: 1.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade400, width: 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 10.0),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.red, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade200, width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey.shade400, width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                    value: _selectedCategoryId,
+                    items: controller.categories
+                        .map((category) => DropdownMenuItem<String>(
+                              value: category.categoryId,
+                              child: Text(category.categoryName),
+                            ))
+                        .toList(),
+                    onChanged: (newCategoryId) {
+                      setState(() {
+                        _selectedCategoryId = newCategoryId;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Iltimos, ma\'lumot kiriting';
+                      }
+                      return null;
+                    },
                   ),
-                  value: _selectedCategoryId,
-                  items: _categories
-                      .map((category) => DropdownMenuItem<String>(
-                            value: category.categoryId,
-                            child: Text(category.categoryName),
-                          ))
-                      .toList(),
-                  onChanged: (newCategoryId) {
-                    setState(() {
-                      _selectedCategoryId = newCategoryId;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Iltimos, ma\'lumot kiriting';
-                    }
-                    return null;
-                  },
                 ),
                 // ... Boshqa form maydonlari
                 SizedBox(
@@ -248,8 +299,20 @@ class _AddProductState extends State<AddProduct> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Form yuborilsa _submitForm'ni chaqirish
-                      _submitForm();
+                      final String name = _nameController.text;
+                      final String description = _descriptionController.text;
+                      final double price =
+                          double.tryParse(_priceController.text) ?? 0.0;
+                      final int stockQuantity =
+                          int.tryParse(_quantityController.text) ?? 0;
+                      _addProductToFirestore(
+                        name: name,
+                        description: description,
+                        price: price,
+                        stockQuantity: stockQuantity,
+                        categoryId: _selectedCategoryId!,
+                        images: imageFileList,
+                      );
                     }
                   },
                   child: const Text('Qo\'shish'),
