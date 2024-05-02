@@ -38,7 +38,7 @@ class CategoryScreen extends StatelessWidget {
                         radius: 30,
                         backgroundColor: Colors.white,
                         foregroundImage: NetworkImage(
-                          category.categoryImage,
+                          category.categoryImage!,
                           scale: 1,
                         ),
                         foregroundColor: Colors.white,

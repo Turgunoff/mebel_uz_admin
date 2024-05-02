@@ -1,12 +1,12 @@
 class CategoryModel {
   String categoryId;
   String categoryName;
-  String categoryImage;
+  String? categoryImage;
 
   CategoryModel({
     required this.categoryId,
     required this.categoryName,
-    required this.categoryImage,
+    this.categoryImage,
   });
 
   // Convert Firestore document snapshot to a CategoryModel
@@ -14,7 +14,7 @@ class CategoryModel {
     return CategoryModel(
       categoryId: json['categoryId'] as String,
       categoryName: json['categoryName'] as String,
-      categoryImage: json['categoryImage'] as String,
+      categoryImage: json['categoryImage'] as String?,
     );
   }
 
