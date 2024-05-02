@@ -16,44 +16,38 @@ class CategoryScreen extends StatelessWidget {
           onPressed: () => Get.to(AddCategoryScreen()),
           child: const Icon(Icons.add),
         ),
-        body: Obx(() {
-          if (controller.categories.isEmpty) {
-            return const Center(child: Text('No categories found'));
-          } else {
-            return controller.isLoading.value // Check the loading state
-                ? const Center(
-                    child:
-                        CircularProgressIndicator()) // Show indicator if loading
-                : ListView.separated(
-                    separatorBuilder: (context, index) => Divider(
-                      color: Colors.grey.shade200,
-                    ),
-                    shrinkWrap: false,
-                    itemCount: controller.categories.length,
-                    itemBuilder: (context, index) {
-                      final category = controller.categories[index];
-                      return ListTile(
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            controller.deleteCategory(category);
-                          },
+        body: Obx(
+          () => controller.isLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.separated(
+                  separatorBuilder: (context, index) => Divider(
+                    color: Colors.grey.shade200,
+                  ),
+                  shrinkWrap: false,
+                  itemCount: controller.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = controller.categories[index];
+                    return ListTile(
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          controller.deleteCategory(category);
+                        },
+                      ),
+                      leading: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white,
+                        foregroundImage: NetworkImage(
+                          category.categoryImage,
+                          scale: 1,
                         ),
-                        leading: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white,
-                          foregroundImage: NetworkImage(
-                            category.categoryImage,
-                            scale: 1,
-                          ),
-                          foregroundColor: Colors.white,
-                        ),
-                        title: Text(category.categoryName),
-                      );
-                    },
-                  );
-          }
-        }),
+                        foregroundColor: Colors.white,
+                      ),
+                      title: Text(category.categoryName),
+                    );
+                  },
+                ),
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
-import '../models/model.dart';
+import '../models/category_model.dart';
 
 class CategoryController extends GetxController {
   final _firestore = FirebaseFirestore.instance;

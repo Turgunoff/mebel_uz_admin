@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'controller/controller.dart';
 
 class ProductsScreen extends StatefulWidget {
-  ProductsScreen({super.key});
+  const ProductsScreen({super.key});
 
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
@@ -17,286 +17,116 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen> {
   final controller = Get.put(ProductsController());
 
-  // Statik ma'lumotlar (masalan, Firestore'dan olingan ma'lumotlarni simulyatsiya qilish uchun)
-  final List<Map<String, dynamic>> productsData = [
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://i.pinimg.com/originals/fb/5e/6f/fb5e6f42c2dd1d35814ae4ff64a55ce0.png",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2",
-      "productCategory": "Kategoriya 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    {
-      "productId": "1",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 1",
-      "productCategory": "Kategoriya 1",
-      "price": 100.00,
-      "soldProducts": 20,
-    },
-    {
-      "productId": "2",
-      "productImage":
-          "https://avatars.mds.yandex.net/i?id=4796ab12d7cb5f88c663b50162e0bb585bbe388d-7012253-images-thumbs&n=13",
-      "productName": "Mahsulot 2asdadsdasdas",
-      "productCategory": "Kategoriyaasdasdsadassd 2",
-      "price": 50.00,
-      "soldProducts": 15,
-    },
-    // ... Qolgan productlarni qo'shing
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: DataTable(
-            headingRowColor: MaterialStateProperty.all(
-                Colors.grey.shade200), // Sarlavha rangi
-            dataRowColor: MaterialStateProperty.all(Colors.white),
-            border: TableBorder.all(color: Colors.grey.shade300),
-            columns: const [
-              DataColumn(label: Text('Id')),
-              DataColumn(label: Text('Rasmi')),
-              DataColumn(label: Text('Nomi')),
-              DataColumn(label: Text('Kategoriya')),
-              DataColumn(label: Text('Narxi')),
-              DataColumn(label: Text('Sotilgan Mahsulotlar')),
-              DataColumn(label: Text('Amallar')),
-            ],
-            rows: productsData.map((product) {
-              return DataRow(
-                cells: [
-                  DataCell(
-                      Text(product['productId'], textAlign: TextAlign.left)),
-                  DataCell(
-                    Container(
-                      width: 100,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2), // Rasmning kengligini belgilash
-                      child: Image.network(
-                        product['productImage'],
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                      Text(product['productName'], textAlign: TextAlign.left)),
-                  DataCell(Text(product['productCategory'],
-                      textAlign: TextAlign.left)),
-                  DataCell(Text(product['price'].toString(),
-                      textAlign: TextAlign.left)),
-                  DataCell(Text(product['soldProducts'].toString(),
-                      textAlign: TextAlign.center)),
-                  DataCell(Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          // Tahrirlash funktsiyasini amalga oshiring
-                        },
-                        icon: const Icon(Icons.edit),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          // O'chirish funktsiyasini amalga oshiring
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
+      appBar: AppBar(
+        title: const Text('Mahsulotlar'),
+        actions: [
+          Obx(
+            () => IconButton(
+              onPressed: controller.isLoading.value
+                  ? null // Yuklash paytida uni xandaq qilish
+                  : () => controller.refreshData(),
+              icon: controller.isLoading.value
+                  ? const SizedBox(
+                      // Yuklash paytida aylantiruvchi indikator
+                      height: 18.0,
+                      width: 18.0,
+                      child: CircularProgressIndicator(),
+                    )
+                  : const Icon(Icons.refresh),
+            ),
+          )
+        ],
+      ),
+      body: Obx(
+        () => controller.isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    headingRowColor: MaterialStateProperty.all(
+                        Colors.grey.shade200), // Sarlavha rangi
+                    dataRowColor: MaterialStateProperty.all(Colors.white),
+                    border: TableBorder.all(color: Colors.grey.shade300),
+                    columns: const [
+                      DataColumn(label: Text('Id')),
+                      DataColumn(label: Text('Rasmi')),
+                      DataColumn(label: Text('Nomi')),
+                      DataColumn(label: Text('Kategoriya')),
+                      DataColumn(label: Text('Narxi')),
+                      DataColumn(label: Text('Sotilgan Mahsulotlar')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Amallar')),
                     ],
-                  )),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
+                    rows: controller.products.map((product) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(product.id, textAlign: TextAlign.left)),
+                          DataCell(
+                            Container(
+                              width: 100,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2), // Rasmning kengligini belgilash
+                              child: Image.network(
+                                product.imageUrl,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          DataCell(
+                              Text(product.name, textAlign: TextAlign.left)),
+                          DataCell(Text('product.category',
+                              textAlign: TextAlign.left)),
+                          DataCell(Text(product.price.toString(),
+                              textAlign: TextAlign.left)),
+                          DataCell(Text(product.stockQuantity.toString(),
+                              textAlign: TextAlign.center)),
+                          DataCell(Text(
+                            product.isActive ? 'Faol' : 'Faol emas',
+                            textAlign: TextAlign.center,
+                          )),
+                          DataCell(Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  // Tahrirlash funktsiyasini amalga oshiring
+                                },
+                                icon: const Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // O'chirish funktsiyasini amalga oshiring
+                                },
+                                icon: const Icon(Icons.delete),
+                              ),
+                            ],
+                          )),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -322,6 +152,7 @@ class _AddProductState extends State<AddProduct> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
+  final _quantityController = TextEditingController();
 
   final ImagePicker imagePicker = ImagePicker();
   List<XFile> imageFileList = [];
@@ -407,6 +238,18 @@ class _AddProductState extends State<AddProduct> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 20),
+                buildTextFormField(
+                  labelText: "Product soni",
+                  controller: _quantityController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Iltimos, ma\'lumot kiriting';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
                 // ... Boshqa form maydonlari
                 SizedBox(
                   height: 100,
@@ -445,7 +288,7 @@ class _AddProductState extends State<AddProduct> {
                                       });
                                     },
                                     icon: const Icon(Icons.cancel,
-                                        color: Colors.red),
+                                        size: 20, color: Colors.red),
                                   ),
                                 ],
                               ),

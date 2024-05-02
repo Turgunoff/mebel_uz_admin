@@ -42,6 +42,7 @@ dependencies:
   syncfusion_flutter_datagrid: ^25.1.41
   table_sticky_headers: ^2.0.5
   image_picker: ^1.1.0
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
