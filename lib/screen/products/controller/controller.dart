@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:mebel_uz_admin/screen/products/model/product_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductsController extends GetxController {
   final _firestore = FirebaseFirestore.instance;
