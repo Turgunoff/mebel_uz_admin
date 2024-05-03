@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mebel_uz_admin/screen/login_page/login_page.dart';
 
 import '../home/home_page.dart';
 
@@ -20,18 +22,18 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _checkCurrentUser() {
-    // final auth = FirebaseAuth.instance;
-    // final user = auth.currentUser;
+    final auth = FirebaseAuth.instance;
+    final user = auth.currentUser;
 
-    // if (user != null) {
-    Timer(const Duration(seconds: 3), () {
-      Get.off(() => HomeScreen());
-    });
-    // } else {
-    //   Timer(const Duration(seconds: 3), () {
-    //     Get.off(() => const LoginScreen());
-    //   });
-    // }
+    if (user != null) {
+      Timer(const Duration(seconds: 3), () {
+        Get.off(() => HomeScreen());
+      });
+    } else {
+      Timer(const Duration(seconds: 3), () {
+        Get.off(() => const LoginScreen());
+      });
+    }
   }
 
   @override

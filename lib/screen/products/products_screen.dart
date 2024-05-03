@@ -50,7 +50,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     dataRowColor: MaterialStateProperty.all(Colors.white),
                     border: TableBorder.all(color: Colors.grey.shade300),
                     columns: const [
-                      DataColumn(label: Text('Id')),
+                      DataColumn(label: Text('№')),
                       DataColumn(label: Text('Rasmi')),
                       DataColumn(label: Text('Nomi')),
                       DataColumn(label: Text('Kategoriya')),
@@ -59,17 +59,21 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       DataColumn(label: Text('Status')),
                       DataColumn(label: Text('Amallar')),
                     ],
-                    rows: controller.products.map((product) {
+                    rows: controller.products.asMap().entries.map((entry) {
+                      final index = entry.key +
+                          1; // 1-chi raqamdan boshlash uchun +1 qo'shamiz
+                      final product = entry.value;
                       return DataRow(
                         cells: [
-                          DataCell(Text(product.id, textAlign: TextAlign.left)),
+                          DataCell(Text(index.toString(),
+                              textAlign: TextAlign.left)),
                           DataCell(
                             Container(
                               width: 100,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2), // Rasmning kengligini belgilash
                               child: Image.network(
-                                product.imageUrl,
+                                product.imageUrls![0],
                                 loadingBuilder: (BuildContext context,
                                     Widget child,
                                     ImageChunkEvent? loadingProgress) {
@@ -92,7 +96,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           ),
                           DataCell(
                               Text(product.name, textAlign: TextAlign.left)),
-                          DataCell(Text('product.category',
+                          DataCell(Text(product.categoryName,
                               textAlign: TextAlign.left)),
                           DataCell(Text(product.price.toString(),
                               textAlign: TextAlign.left)),

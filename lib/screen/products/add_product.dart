@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mebel_uz_admin/screen/categories/models/category_model.dart';
 import 'package:mebel_uz_admin/screen/products/controller/controller.dart';
+import 'package:uuid/uuid.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -29,6 +30,7 @@ class _AddProductState extends State<AddProduct> {
   final ImagePicker imagePicker = ImagePicker();
   List<XFile> imageFileList = [];
   String? _selectedCategoryId;
+  String? _selectedCategoryName;
 
   void _pickImages() async {
     final List<XFile> selectedImages = await imagePicker.pickMultiImage();
@@ -39,32 +41,6 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void _submitForm() async {
-    // Form ma'lumotlarini to'plash
-    final name = _nameController.text;
-    final description = _descriptionController.text;
-    final price = double.tryParse(_priceController.text);
-
-    // Yuklashni tekshirish (agar kerak bo'lsa)
-    if (name.isEmpty || description.isEmpty || price == null) {
-      // Xato xabari ko'rsatish
-      return;
-    }
-
-    // Rasmni serverga yuklash (agar kerak bo'lsa)
-    // ...
-
-    // Ma'lumotlar bazasida yangi mahsulot yozuvini yaratish
-    // ...
-
-    // Muvaffaqiyatli xabarni ko'rsatish
-    // ...
-
-    // Formni qayta tiklash
-    _formKey.currentState!.reset();
-    imageFileList.clear();
-  }
-
   // Function to add product to Firestore
   Future<void> _addProductToFirestore({
     required String name,
@@ -72,7 +48,9 @@ class _AddProductState extends State<AddProduct> {
     required double price,
     required int stockQuantity,
     required String categoryId,
+    required String categoryName,
     required List<XFile> images,
+    required bool isActive,
   }) async {
     // 1. Show a Loading indicator
     showDialog(
@@ -88,19 +66,21 @@ class _AddProductState extends State<AddProduct> {
       // 3. Create product document in Firestore
       CollectionReference productsCollection =
           FirebaseFirestore.instance.collection('Products');
-      DocumentReference docRef = await productsCollection.add({
+      await productsCollection.add({
         'name': name,
         'description': description,
         'price': price,
         'stockQuantity': stockQuantity,
         'categoryId': categoryId,
+        'categoryName': categoryName,
         'imageUrls': imageUrls,
+        'isActive': isActive
       });
 
       // 4. If successful, clear the form & navigate to success screen
       _formKey.currentState!.reset();
       imageFileList.clear();
-      Navigator.pop(context); // Close the loading dialog
+      Get.back();
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Mahsulot qo\'shildi!')));
       // Optionally navigate to a success screen
@@ -235,6 +215,11 @@ class _AddProductState extends State<AddProduct> {
                     onChanged: (newCategoryId) {
                       setState(() {
                         _selectedCategoryId = newCategoryId;
+                        CategoryModel selectedCategory = controller.categories
+                            .firstWhere((category) =>
+                                category.categoryId == newCategoryId);
+
+                        _selectedCategoryName = selectedCategory.categoryName;
                       });
                     },
                     validator: (value) {
@@ -311,7 +296,9 @@ class _AddProductState extends State<AddProduct> {
                         price: price,
                         stockQuantity: stockQuantity,
                         categoryId: _selectedCategoryId!,
+                        categoryName: _selectedCategoryName!,
                         images: imageFileList,
+                        isActive: true,
                       );
                     }
                   },
