@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mebel_uz_admin/screen/categories/models/category_model.dart';
 import 'package:mebel_uz_admin/screen/products/controller/controller.dart';
-import 'package:uuid/uuid.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -32,7 +31,19 @@ class _AddProductState extends State<AddProduct> {
   String? _selectedCategoryId;
   String? _selectedCategoryName;
 
-  void _pickImages() async {
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _priceController.dispose();
+    _quantityController.dispose();
+    imageFileList.clear();
+    _selectedCategoryId = null;
+    _selectedCategoryName = null;
+    super.dispose();
+  }
+
+  Future<void> _pickImages() async {
     final List<XFile> selectedImages = await imagePicker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
       setState(() {
