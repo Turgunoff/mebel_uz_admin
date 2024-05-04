@@ -53,59 +53,48 @@ class _HomeScreenState extends State<HomeScreen> {
           drawer: Drawer(
             elevation: 0.0,
             backgroundColor: Colors.white,
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    children: [
-                      Container(
-                        color: Colors.green[700],
-                        width: double.infinity,
-                        height: 200,
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              height: 70,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const Text(
-                              "Mebel uz",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                            Text(
-                              "info@mebel@uz",
-                              style: TextStyle(
-                                color: Colors.grey[200],
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          height: 120,
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/logo/logo.png'),
+                            ],
+                          ),
                         ),
-                      ),
-                      myDrawerList(),
-                    ],
+                        myDrawerList(),
+                      ],
+                    ),
                   ),
-                ),
-                ListTile(
-                  title: const Text('Chiqish'),
-                  trailing: const Icon(Iconsax.logout),
-                  onTap: () {
-                    if (controller.isLoading.value) {
-                      // If loading, show indicator
-                      Get.dialog(
-                          const Center(child: CircularProgressIndicator()));
-                    } else {
-                      controller.signOut();
-                    }
-                  },
-                ),
-              ],
+                  Divider(
+                    color: Colors.grey.shade200,
+                    thickness: 1,
+                  ),
+                  ListTile(
+                    title: const Text('Chiqish'),
+                    trailing: const Icon(Iconsax.logout),
+                    onTap: () {
+                      if (controller.isLoading.value) {
+                        // If loading, show indicator
+                        Get.dialog(
+                            const Center(child: CircularProgressIndicator()));
+                      } else {
+                        controller.signOut();
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           body: container,
@@ -119,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Colors.white,
       child: Column(
         children: [
-          menuItem(1, "Dashboard", Icons.dashboard_outlined,
+          menuItem(1, "Dashboard", Iconsax.home,
               currentPage == DrawerSections.dashboard ? true : false),
           menuItem(2, "Categories", Icons.people_alt_outlined,
               currentPage == DrawerSections.categories ? true : false),
@@ -136,6 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget menuItem(int id, String title, IconData icon, bool selected) {
     return Material(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       color: selected ? Colors.green : Colors.transparent,
       child: InkWell(
         onTap: () {

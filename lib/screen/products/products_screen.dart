@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mebel_uz_admin/screen/products/add_product.dart';
 
@@ -18,6 +20,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // leading: SvgPicture.network(
+        //   placeholderBuilder: (context) => CircularProgressIndicator(),
+        //   'https://firebasestorage.googleapis.com/v0/b/mebel-uz-4a79c.appspot.com/o/categoryIcons%2FBedside_tables.svg?alt=media&token=277bc0a3-4176-4eaa-ae0e-3d95ef0881e3',
+        // ),
         title: const Text('Mahsulotlar'),
         actions: [
           Obx(
