@@ -126,7 +126,8 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               ElevatedButton(
                 child: const Text('Qo\'shish'),
                 onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
+                  if (_formKey.currentState!.validate() &&
+                      controller.selectedImage != '') {
                     _formKey.currentState!.save(); // Save form values
 
                     try {
@@ -139,6 +140,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
 
                       // Navigate back to CategoryScreen
                       Get.back();
+                      controller.selectedImage = '';
 
                       // Show a success message (optional)
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -149,6 +151,10 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       print('Kategoriya qo\'shishda xatolik yuz berdi: $e');
                       // Consider using a snackbar or modal to display errors to the user
                     }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Rasmlardan birini tanlang!'),
+                    ));
                   }
                 },
               ),
