@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mebel_uz_admin/screen/categories/add_category.dart';
 
@@ -37,14 +38,13 @@ class CategoryScreen extends StatelessWidget {
                           controller.deleteCategory(category);
                         },
                       ),
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white,
-                        foregroundImage: NetworkImage(
-                          category.categoryImage!,
-                          scale: 1,
+                      leading: SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: SvgPicture.network(
+                          category.categoryImage,
+                          fit: BoxFit.contain,
                         ),
-                        foregroundColor: Colors.white,
                       ),
                       title: Text(category.categoryName),
                     );

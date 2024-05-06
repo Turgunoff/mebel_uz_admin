@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 
 import '../models/category_model.dart';
@@ -8,10 +9,32 @@ class CategoryController extends GetxController {
   RxList<CategoryModel> categories = RxList<CategoryModel>([]);
   RxBool isLoading = true.obs;
 
+  final FirebaseStorage storage = FirebaseStorage.instance;
+  final RxList<String> _imageUrls = RxList<String>([]);
+  List<String> get imageUrls => _imageUrls;
+  String? selectedImage;
+
   @override
   void onInit() {
     super.onInit();
     fetchCategories();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    fetchImageRefs();
+  }
+
+  Future<void> fetchImageRefs() async {
+    try {
+      final listResult = await storage.ref('categoryIcons').listAll();
+      final urls = await Future.wait(
+          listResult.items.map((ref) => ref.getDownloadURL()));
+      _imageUrls.value = urls; // Yangilash
+    } catch (e) {
+      print('Error fetching image refs: $e');
+    }
   }
 
   Future<void> refreshData() async {
@@ -47,6 +70,7 @@ class CategoryController extends GetxController {
 
     // Update the category's categoryId with the documentId
     newCategory.categoryId = docRef.id;
+    newCategory.categoryImage = selectedImage!;
 
     // Update the categoryId in Firestore
     await docRef.update({'categoryId': docRef.id});
