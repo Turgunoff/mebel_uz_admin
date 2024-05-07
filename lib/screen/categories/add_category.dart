@@ -13,19 +13,21 @@ class AddCategoryScreen extends StatefulWidget {
 class _AddCategoryScreenState extends State<AddCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _categoryNameController = TextEditingController();
+  final _categoryNameUzController = TextEditingController();
+  final _categoryNameRuController = TextEditingController();
   final controller = Get.put(CategoryController());
 
   @override
   void dispose() {
-    _categoryNameController.dispose();
+    _categoryNameUzController.dispose();
+    _categoryNameRuController.dispose();
     super.dispose();
   }
 
   Future<void> _selectImage(String imageUrl) async {
     controller.selectedImage = imageUrl;
     setState(() {
-      print(imageUrl);
+      // print(imageUrl);
     });
   }
 
@@ -86,9 +88,9 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: _categoryNameController,
+                controller: _categoryNameUzController,
                 decoration: InputDecoration(
-                  labelText: 'kategoriya nomi',
+                  labelText: 'Kategoriya o\'zbekcha nomi',
                   labelStyle: TextStyle(
                     color: Colors.grey.shade500,
                     fontSize: 14,
@@ -123,41 +125,93 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 },
                 // onSaved: (value) => _categoryNameController = value,
               ),
-              ElevatedButton(
-                child: const Text('Qo\'shish'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate() &&
-                      controller.selectedImage != '') {
-                    _formKey.currentState!.save(); // Save form values
-
-                    try {
-                      // Add the category to Firestore
-                      await controller.addCategory(
-                        _categoryNameController.text,
-                        controller
-                            .selectedImage!, // Replace with image upload later
-                      );
-
-                      // Navigate back to CategoryScreen
-                      Get.back();
-                      controller.selectedImage = '';
-
-                      // Show a success message (optional)
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Kategoriya muvaffaqiyatli qo\'shildi!'),
-                      ));
-                    } catch (e) {
-                      // Handle errors (print or show error message)
-                      print('Kategoriya qo\'shishda xatolik yuz berdi: $e');
-                      // Consider using a snackbar or modal to display errors to the user
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Rasmlardan birini tanlang!'),
-                    ));
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _categoryNameRuController,
+                decoration: InputDecoration(
+                  labelText: 'Kategoriya ruscha nomi',
+                  labelStyle: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 14,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade200, width: 1.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.red, width: 1.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade200, width: 1.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade400, width: 2.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Kategoriya nomini kiriting';
                   }
+                  return null;
                 },
+                // onSaved: (value) => _categoryNameController = value,
               ),
+              Obx(() => ElevatedButton(
+                    onPressed: controller.isLoading.value
+                        ? null
+                        : () async {
+                            if (_formKey.currentState!.validate() &&
+                                controller.selectedImage != '') {
+                              _formKey.currentState!.save(); // Save form values
+
+                              controller.isLoading.value = true;
+
+                              try {
+                                // Add the category to Firestore
+                                await controller.addCategory(
+                                  _categoryNameUzController.text,
+                                  _categoryNameRuController.text,
+                                  controller
+                                      .selectedImage!, // Replace with image upload later
+                                );
+
+                                // Navigate back to CategoryScreen
+                                Get.back();
+                                controller.selectedImage = '';
+
+                                // Show a success message (optional)
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                      'Kategoriya muvaffaqiyatli qo\'shildi!'),
+                                ));
+                              } catch (e) {
+                                // Handle errors (print or show error message)
+                                print(
+                                    'Kategoriya qo\'shishda xatolik yuz berdi: ');
+                                // Consider using a snackbar or modal to display errors to the user
+                              } finally {
+                                controller.isLoading.value = false;
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Rasmlardan birini tanlang!'),
+                              ));
+                            }
+                          },
+                    child: controller.isLoading.value
+                        ? const CircularProgressIndicator()
+                        : const Text('Qo\'shish'),
+                  )),
             ],
           ),
         ),

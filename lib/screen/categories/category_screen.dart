@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -5,8 +6,14 @@ import 'package:mebel_uz_admin/screen/categories/add_category.dart';
 
 import 'controller/controller.dart';
 
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends StatefulWidget {
   CategoryScreen({super.key});
+
+  @override
+  State<CategoryScreen> createState() => _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
   final controller = Get.put(CategoryController());
 
   @override
@@ -22,7 +29,9 @@ class CategoryScreen extends StatelessWidget {
         ),
         body: Obx(
           () => controller.isLoading.value
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  child: Text('Yuklanmoqda...', style: TextStyle(fontSize: 20)),
+                )
               : ListView.separated(
                   separatorBuilder: (context, index) => Divider(
                     color: Colors.grey.shade200,
@@ -38,15 +47,45 @@ class CategoryScreen extends StatelessWidget {
                           controller.deleteCategory(category);
                         },
                       ),
-                      leading: SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: SvgPicture.network(
-                          category.categoryImage,
-                          fit: BoxFit.contain,
-                        ),
+                      leading: Row(
+                        // Using a Row for grouping the visibility icon and image
+                        mainAxisSize:
+                            MainAxisSize.min, // Important for correct spacing
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              category.isVisibility
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: category.isVisibility
+                                  ? Colors.green
+                                  : Colors.grey.shade900,
+                            ),
+                            onPressed: () {
+                              category.isVisibility =
+                                  !category.isVisibility; // Toggle visibility
+                              controller.updateCategoryVisibility(
+                                  category); // Update in Firestore (implement this)
+                              setState(() {
+                                controller.update(); // Update GetX
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: CachedNetworkImage(
+                              imageUrl: category.categoryImage,
+                              fit: BoxFit.contain,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            ),
+                          ),
+                        ],
                       ),
-                      title: Text(category.categoryName),
+                      title: Text(category.categoryNameUz),
                     );
                   },
                 ),

@@ -220,7 +220,7 @@ class _AddProductState extends State<AddProduct> {
                     items: controller.categories
                         .map((category) => DropdownMenuItem<String>(
                               value: category.categoryId,
-                              child: Text(category.categoryName),
+                              child: Text(category.categoryNameUz),
                             ))
                         .toList(),
                     onChanged: (newCategoryId) {
@@ -230,7 +230,7 @@ class _AddProductState extends State<AddProduct> {
                             .firstWhere((category) =>
                                 category.categoryId == newCategoryId);
 
-                        _selectedCategoryName = selectedCategory.categoryName;
+                        _selectedCategoryName = selectedCategory.categoryNameUz;
                       });
                     },
                     validator: (value) {

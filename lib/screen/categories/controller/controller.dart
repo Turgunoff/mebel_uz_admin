@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/category_model.dart';
@@ -41,6 +42,17 @@ class CategoryController extends GetxController {
     await fetchCategories(); // Fetch fresh data
   }
 
+  Future<void> updateCategoryVisibility(CategoryModel category) async {
+    try {
+      await _firestore
+          .collection('Categories')
+          .doc(category.categoryId)
+          .update({'isVisibility': category.isVisibility});
+    } catch (e) {
+      print('Error updating category visibility: $e');
+    }
+  }
+
   Future<void> fetchCategories() async {
     isLoading.value = true;
     CollectionReference categoriesRef = _firestore.collection('Categories');
@@ -58,11 +70,14 @@ class CategoryController extends GetxController {
     isLoading.value = false; // Set loading to false when data is fetched
   }
 
-  Future<void> addCategory(String categoryName, String categoryImage) async {
+  Future<void> addCategory(String categoryNameUz, String categoryNameRu,
+      String categoryImage) async {
     CategoryModel newCategory = CategoryModel(
       categoryId: '', // Let Firestore generate ID
-      categoryName: categoryName,
+      categoryNameUz: categoryNameUz,
+      categoryNameRu: categoryNameRu,
       categoryImage: categoryImage,
+      isVisibility: true,
     );
 
     DocumentReference docRef =
@@ -82,18 +97,41 @@ class CategoryController extends GetxController {
   }
 
   Future<void> deleteCategory(CategoryModel category) async {
-    try {
-      CollectionReference categoriesRef = _firestore.collection('Categories');
-      await categoriesRef
-          .doc(category.categoryId)
-          .delete(); // Delete using documentId
+    bool? result = await Get.defaultDialog(
+      title: 'Chiqish',
+      middleText: 'Siz rostdan ham chiqmoqchimisiz?',
+      textConfirm: 'Ha',
+      backgroundColor: Colors.white,
+      textCancel: 'Yo\'q',
+      confirmTextColor: Colors.white,
+      onConfirm: () => Get.back(result: true),
+      onCancel: () => Get.back(result: false),
+    );
 
-      // Remove the deleted category from the controller's list
-      categories
-          .removeWhere((element) => element.categoryId == category.categoryId);
-    } catch (e) {
-      print('Kategoriyani o\'chirishda xatolik yuz berdi: $e');
-      // Consider displaying a snackbar or dialog to the user for error handling
+    if (result != null && result) {
+      isLoading.value = true;
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      try {
+        CollectionReference categoriesRef = _firestore.collection('Categories');
+        await categoriesRef
+            .doc(category.categoryId)
+            .delete(); // Delete using documentId
+
+        // Remove the deleted category from the controller's list
+        categories.removeWhere(
+            (element) => element.categoryId == category.categoryId);
+      } catch (e) {
+        print('Kategoriyani o\'chirishda xatolik yuz berdi: $e');
+      } finally {
+        isLoading.value = false;
+        if (Get.isDialogOpen!) {
+          Get.back();
+        }
+      }
     }
   }
 }
