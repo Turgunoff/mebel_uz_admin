@@ -55,60 +55,79 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       DataColumn(label: Text('Status')),
                       DataColumn(label: Text('Amallar')),
                     ],
-                    rows: controller.products.asMap().entries.map((entry) {
-                      final index = entry.key +
-                          1; // 1-chi raqamdan boshlash uchun +1 qo'shamiz
-                      final product = entry.value;
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(index.toString(),
-                              textAlign: TextAlign.left)),
-                          DataCell(
-                            Container(
-                              width: 100,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2), // Rasmning kengligini belgilash
-                              child: CachedNetworkImage(
-                                imageUrl: product.imageUrls![0], // Rasm URL'si
-                                fit: BoxFit.contain,
-                                placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                              Text(product.name, textAlign: TextAlign.left)),
-                          DataCell(Text(product.categoryName,
-                              textAlign: TextAlign.left)),
-                          DataCell(Text(product.price.toString(),
-                              textAlign: TextAlign.left)),
-                          DataCell(Text(product.stockQuantity.toString(),
-                              textAlign: TextAlign.center)),
-                          DataCell(Text(
-                            product.isActive ? 'Faol' : 'Faol emas',
-                            textAlign: TextAlign.center,
-                          )),
-                          DataCell(Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  // Tahrirlash funktsiyasini amalga oshiring
-                                },
-                                icon: const Icon(Icons.edit),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  // O'chirish funktsiyasini amalga oshiring
-                                },
-                                icon: const Icon(Icons.delete),
-                              ),
-                            ],
-                          )),
-                        ],
-                      );
-                    }).toList(),
+                    rows: controller.products.isEmpty
+                        ? [
+                            // If products list is empty, show a placeholder row
+                            const DataRow(cells: [
+                              DataCell(Text('Mahsulotlar kiritilmagan',
+                                  textAlign: TextAlign.center)),
+                              DataCell(SizedBox.shrink()), // 2-ustun uchun
+                              DataCell(SizedBox.shrink()), // 3-ustun uchun
+                              DataCell(SizedBox.shrink()), // 4-ustun uchun
+                              DataCell(SizedBox.shrink()), // 5-ustun uchun
+                              DataCell(SizedBox.shrink()), // 6-ustun uchun
+                              DataCell(SizedBox.shrink()), // 7-ustun uchun
+                              DataCell(SizedBox.shrink()), // 8-ustun uchun
+                            ]),
+                          ]
+                        : controller.products.asMap().entries.map((entry) {
+                            final index = entry.key +
+                                1; // 1-chi raqamdan boshlash uchun +1 qo'shamiz
+                            final product = entry.value;
+                            return DataRow(
+                              cells: [
+                                DataCell(Text(index.toString(),
+                                    textAlign: TextAlign.left)),
+                                DataCell(
+                                  Container(
+                                    width: 100,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical:
+                                            2), // Rasmning kengligini belgilash
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          product.imageUrls![0], // Rasm URL'si
+                                      fit: BoxFit.contain,
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  ),
+                                ),
+                                DataCell(Text(product.name,
+                                    textAlign: TextAlign.left)),
+                                DataCell(Text(product.categoryName,
+                                    textAlign: TextAlign.left)),
+                                DataCell(Text(product.price.toString(),
+                                    textAlign: TextAlign.left)),
+                                DataCell(Text(product.stockQuantity.toString(),
+                                    textAlign: TextAlign.center)),
+                                DataCell(Text(
+                                  product.isActive ? 'Faol' : 'Faol emas',
+                                  textAlign: TextAlign.center,
+                                )),
+                                DataCell(Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        // Tahrirlash funktsiyasini amalga oshiring
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        // O'chirish funktsiyasini amalga oshiring
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    ),
+                                  ],
+                                )),
+                              ],
+                            );
+                          }).toList(),
                   ),
                 ),
               ),

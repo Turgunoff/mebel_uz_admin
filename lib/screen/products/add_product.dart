@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -174,6 +175,56 @@ class _AddProductState extends State<AddProduct> {
             key: _formKey,
             child: Column(
               children: [
+                SizedBox(
+                  height: imageFileList.isEmpty ? 0 : 100,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: imageFileList.isEmpty ? 0 : imageFileList.length,
+                    itemBuilder: (context, index) => imageFileList.isEmpty
+                        ? const SizedBox.shrink()
+                        : Container(
+                            margin: const EdgeInsets.only(right: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.grey.shade200,
+                                width: 1,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Stack(
+                                // "X" tugma qo'shish uchun
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Image.file(
+                                    File(imageFileList[index].path),
+                                    fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                  IconButton(
+                                    // "X" tugma
+                                    onPressed: () {
+                                      setState(() {
+                                        imageFileList.removeAt(index);
+                                      });
+                                    },
+                                    icon: const Icon(Icons.cancel,
+                                        size: 20, color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: _pickImages,
+                  child: const Text('Rasmlarni Tanlash'),
+                ),
+                const SizedBox(height: 20),
                 buildTextFormField(
                   controller: _nameController,
                   labelText: 'Product Nomi',
@@ -264,7 +315,22 @@ class _AddProductState extends State<AddProduct> {
                     items: controller.categories
                         .map((category) => DropdownMenuItem<String>(
                               value: category.categoryId,
-                              child: Text(category.categoryNameUz),
+                              child: Row(
+                                children: [
+                                  CachedNetworkImage(
+                                    imageUrl: category.categoryImage,
+                                    width: 40,
+                                    height: 40,
+                                    fit: BoxFit.contain,
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(category.categoryNameUz),
+                                ],
+                              ),
                             ))
                         .toList(),
                     onChanged: (newCategoryId) {
@@ -286,55 +352,7 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 // ... Boshqa form maydonlari
-                SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: imageFileList.isEmpty ? 0 : imageFileList.length,
-                    itemBuilder: (context, index) => imageFileList.isEmpty
-                        ? const SizedBox.shrink()
-                        : Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Colors.grey.shade200,
-                                width: 1,
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                // "X" tugma qo'shish uchun
-                                alignment: Alignment.topRight,
-                                children: [
-                                  Image.file(
-                                    File(imageFileList[index].path),
-                                    fit: BoxFit.cover,
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  IconButton(
-                                    // "X" tugma
-                                    onPressed: () {
-                                      setState(() {
-                                        imageFileList.removeAt(index);
-                                      });
-                                    },
-                                    icon: const Icon(Icons.cancel,
-                                        size: 20, color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: _pickImages,
-                  child: const Text('Rasmlarni Tanlash'),
-                ),
+
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
