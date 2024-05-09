@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mebel_uz_admin/screen/products/add_product.dart';
@@ -18,10 +19,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // leading: SvgPicture.network(
-        //   placeholderBuilder: (context) => CircularProgressIndicator(),
-        //   'https://firebasestorage.googleapis.com/v0/b/mebel-uz-4a79c.appspot.com/o/categoryIcons%2FBedside_tables.svg?alt=media&token=277bc0a3-4176-4eaa-ae0e-3d95ef0881e3',
-        // ),
         title: const Text('Mahsulotlar'),
         actions: [
           Obx(
@@ -29,21 +26,16 @@ class _ProductsScreenState extends State<ProductsScreen> {
               onPressed: controller.isLoading.value
                   ? null // Yuklash paytida uni xandaq qilish
                   : () => controller.refreshData(),
-              icon: controller.isLoading.value
-                  ? const SizedBox(
-                      // Yuklash paytida aylantiruvchi indikator
-                      height: 18.0,
-                      width: 18.0,
-                      child: CircularProgressIndicator(),
-                    )
-                  : const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
             ),
           )
         ],
       ),
       body: Obx(
         () => controller.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: Text('Yuklanmoqda...', style: TextStyle(fontSize: 20)),
+              )
             : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SingleChildScrollView(
@@ -76,25 +68,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               width: 100,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2), // Rasmning kengligini belgilash
-                              child: Image.network(
-                                product.imageUrls![0],
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                    ),
-                                  );
-                                },
+                              child: CachedNetworkImage(
+                                imageUrl: product.imageUrls![0], // Rasm URL'si
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
                               ),
                             ),
                           ),

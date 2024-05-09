@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mebel_uz_admin/screen/categories/models/category_model.dart';
 import 'package:mebel_uz_admin/screen/products/controller/controller.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -43,11 +46,42 @@ class _AddProductState extends State<AddProduct> {
     super.dispose();
   }
 
+  Future<XFile?> compressImage(
+      String filePath, int quality, int targetWidth, int targetHeight) async {
+    // Temporary file to store compressed image
+    final tempDir = await getTemporaryDirectory(); // From path_provider package
+    final targetPath =
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    var result = await FlutterImageCompress.compressAndGetFile(
+      filePath,
+      targetPath, // Output to the temporary file
+      quality: quality,
+      minWidth: targetWidth,
+      minHeight: targetHeight,
+    );
+
+    // Convert compressed File into a new XFile object
+    if (result != null) {
+      return XFile(result.path);
+    } else {
+      return null;
+    }
+  }
+
   Future<void> _pickImages() async {
     final List<XFile> selectedImages = await imagePicker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
       setState(() {
-        imageFileList.addAll(selectedImages);
+        imageFileList.clear(); // Eski narsalarni tozalang
+        selectedImages.forEach((file) async {
+          XFile? compressedImage =
+              await compressImage(file.path, 100, 1024, 768);
+          if (compressedImage != null) {
+            // Null check to handle failures
+            imageFileList.add(compressedImage);
+          }
+        });
       });
     }
   }
@@ -116,6 +150,7 @@ class _AddProductState extends State<AddProduct> {
       Reference storageRef =
           FirebaseStorage.instance.ref().child('productImages/$fileName');
       UploadTask uploadTask = storageRef.putFile(File(imageFile.path));
+      await uploadTask; // Wait for the upload to complete
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
 
       // Get the download URL of the uploaded image
@@ -164,7 +199,11 @@ class _AddProductState extends State<AddProduct> {
                 buildTextFormField(
                   labelText: "Product Narxi",
                   controller: _priceController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true), // Allow decimals
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Iltimos, ma\'lumot kiriting';
@@ -176,6 +215,11 @@ class _AddProductState extends State<AddProduct> {
                 buildTextFormField(
                   labelText: "Product soni",
                   controller: _quantityController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true), // Allow decimals
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Iltimos, ma\'lumot kiriting';
@@ -328,9 +372,12 @@ class _AddProductState extends State<AddProduct> {
     required TextEditingController controller,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
+      inputFormatters: inputFormatters,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: labelText,
         labelStyle: TextStyle(

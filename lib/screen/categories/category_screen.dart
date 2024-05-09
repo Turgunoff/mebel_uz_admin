@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mebel_uz_admin/screen/categories/add_category.dart';
 
@@ -77,8 +76,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             child: CachedNetworkImage(
                               imageUrl: category.categoryImage,
                               fit: BoxFit.contain,
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
+                              placeholder: (context, url) => const Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: CircularProgressIndicator(),
+                              ),
                               errorWidget: (context, url, error) =>
                                   const Icon(Icons.error),
                             ),

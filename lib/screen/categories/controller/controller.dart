@@ -19,13 +19,14 @@ class CategoryController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCategories();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
     fetchImageRefs();
   }
+
+  // @override
+  // void onReady() {
+  //   super.onReady();
+
+  // }
 
   Future<void> fetchImageRefs() async {
     try {
